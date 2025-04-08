@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kevyn's Retro World</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Press Start 2P', monospace;
+      background-color: #111;
+      color: #00ff00;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background-image: url('https://www.transparenttextures.com/patterns/asfalt-light.png');
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .status {
+      font-size: 1rem;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    nav a {
+      background-color: #222;
+      border: 2px solid #00ff00;
+      padding: 10px 20px;
+      text-decoration: none;
+      color: #00ff00;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      background-color: #00ff00;
+      color: #000;
+    }
+
+    section {
+      max-width: 700px;
+      margin-bottom: 2rem;
+    }
+
+    .game-list img {
+      max-width: 100px;
+      margin: 10px;
+    }
+
+    .support {
+      font-size: 0.9rem;
+      background: #222;
+      border: 2px dashed #00ff00;
+      padding: 1rem;
+    }
+
+    footer {
+      font-size: 0.75rem;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>> Welcome to Kevyn's World</h1>
+    <div class="status">> Status: UNDER CONSTRUCTION 🚧</div>
+  </header>
+
+  <nav>
+    <a href="#games">Games</a>
+    <a href="#about">About Me</a>
+    <a href="#support">Support</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <section id="games">
+    <h2>> Games</h2>
+    <p>Coming Soon!</p>
+    <!--<div class="game-list">
+      <p>🟢 Flappy Clone – <a href="#">Play</a></p>
+      <p>🟢 Snake Game – <a href="#">Play</a></p>
+      <p>🕑 Platformer WIP – Coming Soon</p>
+    </div>-->
+  </section>
+
+  <section id="about">
+    <h2>> About Me</h2>
+    <p>
+      Level 22. Web Developer turned Game Developer.<br/>
+      Fighting to turn code into a college dream, one pixel at a time.<br/>
+    </p>
+  </section>
+
+  <section id="support" class="support">
+    <h2>> Support Me</h2>
+    <!--<p>
+      If you enjoy my work or believe in my story, consider supporting me!<br/>
+      Every $1 brings me closer to college.
+    </p>-->
+    <ul>
+      <!--<li><a href="#">Ko-fi</a></li>-->
+      <li><a href="#">Buy Me a Coffee</a></li>
+      <!--<li><a href="#">PayPal</a></li>-->
+    </ul>
+  </section>
+
+  <section id="contact">
+    <h2>> Contact</h2>
+    <p>Email: kevin.chang.edu@gmail.com</p>
+    <p>Discord: Dr.K#9651</p>
+  </section>
+
+  <footer>
+    <p>> Last updated: April 2025 | Kevyn's Retro World ⓒ</p>
+  </footer>
+
+  <script>
+    // Example JS: Retro loading animation
+    document.addEventListener('DOMContentLoaded', () => {
+      const status = document.querySelector('.status');
+      let dots = 0;
+      setInterval(() => {
+        dots = (dots + 1) % 4;
+        status.innerHTML = `> Status: UNDER CONSTRUCTION 🚧${'.'.repeat(dots)}`;
+      }, 600);
+    });
+  </script>
+</body>
+</html>
