@@ -22,12 +22,11 @@
 
     #game-container {
       position: relative;
-      width: 410px;
-      height: 410px;
+      width: 400px;
+      height: 400px;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
     }
 
     canvas {
@@ -130,14 +129,26 @@
       
       /* Adjust game container for mobile */
       #game-container {
-        width: 95vw;
-        height: 95vh;
-        max-width: 410px;
-        max-height: 410px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
+        width: 95vmin;
+        height: 95vmin;
+        max-width: 380px; /* Slightly smaller to fit most screens */
+        max-height: 380px;
+      }
+      
+      /* Make canvas slightly smaller on mobile */
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+      
+      /* Adjust text sizes for mobile */
+      #start-screen h2 {
+        font-size: 1.2rem;
+      }
+      
+      #start-screen p {
+        font-size: 0.7rem;
+        margin: 8px 0;
       }
       
       /* Hide PC turbo indicator on mobile */
@@ -145,10 +156,9 @@
         display: none !important;
       }
       
-      /* Adjust start screen text for mobile */
-      #start-screen p {
-        font-size: 0.8rem;
-        margin: 10px 0;
+      /* Adjust score displays */
+      #score-display, #high-score-display {
+        font-size: 0.7rem;
       }
     }
   </style>
@@ -189,7 +199,10 @@
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
 
-    const gridSize = 20;
+    // Adjust grid size based on device
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const baseGridSize = 20;
+    const gridSize = isTouchDevice ? Math.floor(canvas.width / (canvas.width / baseGridSize)) : baseGridSize;
     const tileCount = canvas.width / gridSize;
 
     let snake = [];
@@ -226,7 +239,6 @@
     let touchEndY = 0;
 
     // Check if device is touch-enabled
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouchDevice) {
       mobileInstruction.style.display = 'block';
     }
@@ -489,6 +501,17 @@
       canvas.addEventListener('touchstart', handleTouchStart, {passive: false});
       canvas.addEventListener('touchmove', handleTouchMove, {passive: false});
       document.body.style.overflow = 'hidden'; // Prevent page scrolling on mobile
+      
+      // Adjust canvas size for mobile
+      function resizeCanvas() {
+        const container = document.getElementById('game-container');
+        const size = Math.min(container.offsetWidth, container.offsetHeight);
+        canvas.style.width = `${size}px`;
+        canvas.style.height = `${size}px`;
+      }
+      
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
     }
   </script>
 </body>
