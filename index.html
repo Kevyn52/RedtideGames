@@ -253,30 +253,39 @@ footer {
     });
 
     // Example JS: Trigger glitch effect on hover and on touch devices
-  document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
     const h1Element = document.querySelector('h1');
+    const h2Element = document.querySelector('h2');
     let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
     // Glitch effect on hover and touch
-    const triggerGlitch = () => {
-      h1Element.style.animation = 'glitch 0.5s infinite';
+    const triggerGlitch = (element) => {
+      element.style.animation = 'glitch 0.5s infinite';
     };
 
-    const stopGlitch = () => {
-      h1Element.style.animation = 'none';
+    const stopGlitch = (element) => {
+      element.style.animation = 'none';
     };
 
     // Hover effect for non-touch devices
     if (!isTouchDevice) {
-      h1Element.addEventListener('mouseover', triggerGlitch);
-      h1Element.addEventListener('mouseout', stopGlitch);
+      // Add glitch effect to both h1 and h2 on hover
+      h1Element.addEventListener('mouseover', () => triggerGlitch(h1Element));
+      h1Element.addEventListener('mouseout', () => stopGlitch(h1Element));
+
+      h2Element.addEventListener('mouseover', () => triggerGlitch(h2Element));
+      h2Element.addEventListener('mouseout', () => stopGlitch(h2Element));
     }
 
     // Touch events for touch devices
-    h1Element.addEventListener('touchstart', triggerGlitch);
-    h1Element.addEventListener('touchend', stopGlitch);
+    h1Element.addEventListener('touchstart', () => triggerGlitch(h1Element));
+    h1Element.addEventListener('touchend', () => stopGlitch(h1Element));
+
+    h2Element.addEventListener('touchstart', () => triggerGlitch(h2Element));
+    h2Element.addEventListener('touchend', () => stopGlitch(h2Element));
   });
-  
+
+
   </script>
 </body>
 </html>
