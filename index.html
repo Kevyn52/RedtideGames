@@ -88,6 +88,50 @@ footer {
   text-align: center;
 }
 
+/* Glitch Effect */
+@keyframes glitch {
+    0% {
+      transform: translateX(0);
+      text-shadow: 1px 1px 5px rgba(0, 255, 0, 0.7), -1px -1px 5px rgba(0, 255, 0, 0.7);
+    }
+    20% {
+      transform: translateX(-5px);
+      text-shadow: 2px 2px 5px rgba(0, 255, 0, 0.5), -2px -2px 5px rgba(0, 255, 0, 0.5);
+    }
+    40% {
+      transform: translateX(5px);
+      text-shadow: 3px 3px 5px rgba(0, 255, 0, 0.4), -3px -3px 5px rgba(0, 255, 0, 0.4);
+    }
+    60% {
+      transform: translateX(-3px);
+      text-shadow: 1px 1px 5px rgba(0, 255, 0, 0.7), -1px -1px 5px rgba(0, 255, 0, 0.7);
+    }
+    80% {
+      transform: translateX(2px);
+      text-shadow: 2px 2px 5px rgba(0, 255, 0, 0.5), -2px -2px 5px rgba(0, 255, 0, 0.5);
+    }
+    100% {
+      transform: translateX(0);
+      text-shadow: 1px 1px 5px rgba(0, 255, 0, 0.7), -1px -1px 5px rgba(0, 255, 0, 0.7);
+    }
+  }
+
+  /* Glitch Effect on Hover for h1 */
+  h1:hover {
+    animation: glitch 0.5s infinite;
+  }
+
+  /* Ensure a clean layout for glitch effect */
+  h1 {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+  }
+
+  h2:hover {
+    animation: glitch 0.5s infinite;
+  }
+
 /* Media Queries for Mobile */
 @media screen and (max-width: 600px) {
   body {
@@ -149,12 +193,12 @@ footer {
     <div class="status">> Status: UNDER CONSTRUCTION 🚧</div>
   </header>
 
-  <nav>
+  <!--<nav>
     <a href="#games">Games</a>
     <a href="#about">About Me</a>
     <a href="#support">Support</a>
     <a href="#contact">Contact</a>
-  </nav>
+  </nav>-->
 
   <section id="games">
     <h2>> Games</h2>
