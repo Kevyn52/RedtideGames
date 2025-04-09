@@ -132,6 +132,45 @@ footer {
     animation: glitch 0.5s infinite;
   }
 
+  #loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #111;
+  color: #00ff00;
+  font-family: 'Press Start 2P', monospace;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  }
+
+  .boot-text {
+    margin-bottom: 20px;
+    font-size: 1rem;
+    animation: blink 1s infinite;
+  }
+
+  .progress-bar {
+    width: 80%;
+    max-width: 400px;
+    height: 20px;
+    border: 2px solid #00ff00;
+    background-color: transparent;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    width: 0%;
+    height: 100%;
+    background-color: #00ff00;
+    transition: width 0.3s ease;
+  }
+
+
 /* Media Queries for Mobile */
 @media screen and (max-width: 600px) {
   body {
@@ -192,6 +231,15 @@ footer {
     <h1>> Welcome to Kevyn's World</h1>
     <div class="status">> Status: UNDER CONSTRUCTION 🚧</div>
   </header>
+
+  <div id="loading-screen">
+    <div class="boot-text">> Initializing Kevyn's World...</div>
+    <div class="progress-bar">
+      <div class="bar-fill" id="bar-fill"></div>
+    </div>
+  </div>
+
+  <div id="main-content" style="display: none;">
 
   <!--<nav>
     <a href="#games">Games</a>
@@ -288,6 +336,26 @@ footer {
       h2.addEventListener('touchstart', () => triggerGlitch(h2));
       h2.addEventListener('touchend', () => stopGlitch(h2));
     });
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const fill = document.getElementById('bar-fill');
+    let percent = 0;
+
+    const interval = setInterval(() => {
+      percent += 2;
+      fill.style.width = percent + '%';
+
+      if (percent >= 100) {
+        clearInterval(interval);
+
+        // Delay a little for effect, then hide loading screen
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+          document.getElementById('main-content').style.display = 'block';
+        }, 500);
+      }
+    }, 50); // Adjust for speed of progress bar
   });
 
   </script>
