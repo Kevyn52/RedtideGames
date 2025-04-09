@@ -252,7 +252,12 @@ footer {
       }, 600);
     });
 
-        // Glitch effect on hover and touch
+    // Example JS: Trigger glitch effect on hover and on touch devices
+  document.addEventListener('DOMContentLoaded', () => {
+    const h1Element = document.querySelector('h1');
+    let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // Glitch effect on hover and touch
     const triggerGlitch = () => {
       h1Element.style.animation = 'glitch 0.5s infinite';
     };
@@ -271,7 +276,7 @@ footer {
     h1Element.addEventListener('touchstart', triggerGlitch);
     h1Element.addEventListener('touchend', stopGlitch);
   });
-    
+  
   </script>
 </body>
 </html>
