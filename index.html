@@ -251,6 +251,27 @@ footer {
         status.innerHTML = `> Status: UNDER CONSTRUCTION 🚧${'.'.repeat(dots)}`;
       }, 600);
     });
+
+        // Glitch effect on hover and touch
+    const triggerGlitch = () => {
+      h1Element.style.animation = 'glitch 0.5s infinite';
+    };
+
+    const stopGlitch = () => {
+      h1Element.style.animation = 'none';
+    };
+
+    // Hover effect for non-touch devices
+    if (!isTouchDevice) {
+      h1Element.addEventListener('mouseover', triggerGlitch);
+      h1Element.addEventListener('mouseout', stopGlitch);
+    }
+
+    // Touch events for touch devices
+    h1Element.addEventListener('touchstart', triggerGlitch);
+    h1Element.addEventListener('touchend', stopGlitch);
+  });
+    
   </script>
 </body>
 </html>
