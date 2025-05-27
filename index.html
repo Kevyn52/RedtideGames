@@ -107,11 +107,6 @@
       overflow: hidden;
     }
 
-    a .link-text {
-      display: inline-block;
-      transition: opacity 0.3s ease;
-    }
-
     a::after {
       content: "View File";
       position: absolute;
@@ -125,10 +120,6 @@
       transition: opacity 0.3s ease;
       padding: 0;
       text-align: center;
-    }
-
-    a:hover .link-text {
-      opacity: 0;
     }
 
     a:hover::after {
@@ -217,6 +208,7 @@
       box-shadow: 0 0 5px rgba(0,0,0,0.4);
       text-transform: uppercase;
     }
+
   </style>
 </head>
 <body>
@@ -244,7 +236,11 @@
 
   <div class="file-section">
     <h2>Current Projects</h2>
-    <a href="https://play.unity.com/en/games/d291cbf3-d3af-4f53-8bac-7bb027dc155d/shooting-range"><span class="link-text">FPS (Experimental)</span></a>
+    <a href="https://play.unity.com/en/games/d291cbf3-d3af-4f53-8bac-7bb027dc155d/shooting-range">
+      <span style="text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px;">
+        FPS (Experimental)
+      </span>
+    </a>
 
     <br/>
 
@@ -263,7 +259,11 @@
 
   <div class="file-section">
     <h2>Support Me</h2>
-    <a href="https://ko-fi.com/kevyndev">Buy Me a Coffee</a>
+    <a href="https://ko-fi.com/kevyndev">
+      <span style="text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px;">
+        Buy Me a Coffee
+      </span>
+    </a>
   </div>
 
   <div class="stamp">TOP SECRET</div>
