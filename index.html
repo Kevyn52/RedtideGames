@@ -2,1109 +2,713 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Redtide Games | Independent Game Studio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redtide Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --primary: #e31b23;
-      --primary-dark: #c0151c;
-      --dark: #0b0c10;
-      --darker: #07080b;
-      --light: #f0f0f0;
-      --medium: #6d6d6d;
-      --accent: #ff6b35;
-      --purple: #8b5cf6;
+      --bg:        #0b0d10;
+      --surface:   #10141a;
+      --red:       #c0392b;
+      --red-dim:   #7a1f16;
+      --red-glow:  rgba(192, 57, 43, 0.18);
+      --text:      #c8cdd6;
+      --text-dim:  #525966;
+      --text-faint:#272c34;
+      --serif:     'Cormorant Garamond', Georgia, serif;
+      --mono:      'DM Mono', monospace;
     }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Montserrat', sans-serif;
-      background: #000;
-      color: var(--light);
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--serif);
+      font-size: 17px;
       line-height: 1.7;
       overflow-x: hidden;
-      position: relative;
+      cursor: none;
     }
 
-    /* Animated Background */
-    .bg-canvas {
+    /* ── Custom cursor ── */
+    #cursor {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      opacity: 0.3;
-    }
-
-    .floating-shapes {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .shape {
-      position: absolute;
+      width: 10px; height: 10px;
+      background: var(--red);
       border-radius: 50%;
-      animation: float 20s infinite linear;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+      mix-blend-mode: normal;
+    }
+    #cursor.hover {
+      width: 28px; height: 28px;
+      background: transparent;
+      border: 1px solid var(--red);
     }
 
-    .shape:nth-child(1) {
-      width: 3px;
-      height: 3px;
-      background: var(--primary);
-      top: 20%;
-      left: 10%;
-      animation-delay: 0s;
-      box-shadow: 0 0 10px var(--primary);
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.035;
+      pointer-events: none;
+      z-index: 100;
     }
 
-    .shape:nth-child(2) {
-      width: 2px;
-      height: 2px;
-      background: var(--accent);
-      top: 60%;
-      left: 80%;
-      animation-delay: -5s;
-      box-shadow: 0 0 8px var(--accent);
-    }
-
-    .shape:nth-child(3) {
-      width: 4px;
-      height: 4px;
-      background: var(--purple);
-      top: 80%;
-      left: 20%;
-      animation-delay: -10s;
-      box-shadow: 0 0 12px var(--purple);
-    }
-
-    .shape:nth-child(4) {
-      width: 1px;
-      height: 1px;
-      background: var(--light);
-      top: 40%;
-      left: 60%;
-      animation-delay: -15s;
-      box-shadow: 0 0 6px var(--light);
-    }
-
-    @keyframes float {
-      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      position: relative;
-    }
-
-    /* Navigation with Floating Effect */
+    /* ── NAV ── */
     nav {
-      position: fixed;
-      top: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      background: rgba(11, 12, 16, 0.1);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(227, 27, 35, 0.2);
-      border-radius: 50px;
-      padding: 1rem 2rem;
-      transition: all 0.3s ease;
-    }
-
-    nav:hover {
-      background: rgba(11, 12, 16, 0.3);
-      border-color: rgba(227, 27, 35, 0.5);
-      box-shadow: 0 0 30px rgba(227, 27, 35, 0.2);
-    }
-
-    .nav-container {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 50;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 3rem;
+      justify-content: space-between;
+      padding: 28px 48px;
+      background: linear-gradient(to bottom, rgba(11,13,16,0.95) 0%, transparent 100%);
     }
 
-    .nav-logo {
-      font-family: 'Orbitron', sans-serif;
+    .logo {
+      font-family: var(--serif);
+      font-size: 1.05rem;
       font-weight: 600;
-      font-size: 1.2rem;
-      color: var(--light);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #fff;
       text-decoration: none;
-      position: relative;
     }
-
-    .nav-logo span {
-      color: var(--primary);
-      text-shadow: 0 0 10px var(--primary);
-    }
+    .logo span { color: var(--red); }
 
     .nav-links {
-      display: flex;
-      gap: 2rem;
+      display: flex; gap: 36px;
+      list-style: none;
     }
-
     .nav-links a {
-      color: var(--light);
-      text-decoration: none;
-      font-weight: 400;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      transition: all 0.3s;
-      position: relative;
-      padding: 0.5rem 0;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
     }
+    .nav-links a:hover { color: var(--text); }
 
-    .nav-links a:hover {
-      color: var(--primary);
-      text-shadow: 0 0 10px var(--primary);
-    }
-
-    /* Artistic Header */
-    header {
-      height: 100vh;
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: center;
-      text-align: center;
+      padding: 0 48px;
       position: relative;
       overflow: hidden;
     }
 
-    .header-art {
+    /* animated tide lines */
+    .tide-canvas {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.55;
+    }
+
+    /* red gradient bleed */
+    #hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -80px;
+      width: 520px; height: 520px;
+      background: radial-gradient(circle at 30% 70%, var(--red-glow) 0%, transparent 70%);
+      pointer-events: none;
+      animation: pulse 6s ease-in-out infinite alternate;
+    }
+    @keyframes pulse { from { opacity: 0.6 } to { opacity: 1 } }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+    }
+
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(3.2rem, 7vw, 6.8rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: #fff;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.4s forwards;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--red);
+    }
+
+    .hero-sub {
+      margin-top: 28px;
+      font-size: 1.15rem;
+      font-weight: 300;
+      color: var(--text-dim);
+      max-width: 480px;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.65s forwards;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 52px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--text-faint);
+      padding-bottom: 6px;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.85s forwards;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .hero-cta:hover { color: var(--red); border-color: var(--red); }
+    .hero-cta .arrow { transition: transform 0.2s; }
+    .hero-cta:hover .arrow { transform: translateX(5px); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* scroll hint */
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px; right: 48px;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      animation: fadeUp 1s 1.2s forwards;
+    }
+    .scroll-hint::after {
+      content: '';
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--text-faint), transparent);
+      animation: scrollLine 2s 1.5s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%   { transform: scaleY(0); transform-origin: top; opacity: 1; }
+      50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      51%  { transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+
+    /* ── GAMES SECTION ── */
+    #games {
+      padding: 140px 48px 120px;
+      position: relative;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--red-dim);
+      margin-bottom: 64px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 2px;
+    }
+
+    .game-card {
+      position: relative;
+      background: var(--surface);
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: flex-end;
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      group: true;
+    }
+    .game-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%);
       z-index: 1;
     }
 
-    .art-line {
+    /* placeholder art bg per card */
+    .game-card .art {
+      position: absolute; inset: 0;
+      z-index: 0;
+      transition: transform 0.6s ease;
+    }
+    .game-card:hover .art { transform: scale(1.04); }
+
+    .art-1 {
+      background:
+        radial-gradient(ellipse at 20% 80%, #3d0d08 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, #0d1e3a 0%, transparent 50%),
+        linear-gradient(135deg, #0a0c0f 0%, #141c28 100%);
+    }
+    .art-2 {
+      background:
+        radial-gradient(ellipse at 70% 60%, #1a0e2e 0%, transparent 55%),
+        radial-gradient(ellipse at 30% 30%, #0d1a10 0%, transparent 50%),
+        linear-gradient(135deg, #080b0e 0%, #111820 100%);
+    }
+    .art-3 {
+      background:
+        radial-gradient(ellipse at 50% 50%, #2a0e0b 0%, transparent 60%),
+        linear-gradient(180deg, #050608 0%, #0f1117 100%);
+    }
+
+    /* floating geometric shapes per card */
+    .art-shape {
       position: absolute;
-      background: linear-gradient(45deg, var(--primary), transparent);
-      animation: drawLine 3s ease-out infinite;
+      border: 1px solid rgba(192,57,43,0.15);
+      border-radius: 50%;
     }
-
-    .art-line:nth-child(1) {
-      width: 2px;
-      height: 200px;
-      top: 10%;
-      left: 20%;
-      animation-delay: 0s;
+    .art-1 .art-shape {
+      width: 200px; height: 200px;
+      top: -40px; right: -40px;
+      animation: rotate 20s linear infinite;
     }
-
-    .art-line:nth-child(2) {
-      width: 150px;
-      height: 1px;
-      top: 70%;
-      right: 15%;
-      animation-delay: 1s;
+    .art-2 .art-shape {
+      width: 150px; height: 150px;
+      bottom: 20px; left: 20px;
+      border-radius: 0;
+      transform: rotate(45deg);
+      animation: rotate 14s linear infinite reverse;
     }
-
-    .art-line:nth-child(3) {
-      width: 1px;
-      height: 100px;
-      bottom: 20%;
-      left: 70%;
-      animation-delay: 2s;
+    .art-3 .art-shape {
+      width: 120px; height: 120px;
+      top: 30px; right: 60px;
+      border-radius: 2px;
+      animation: rotate 18s linear infinite;
     }
+    @keyframes rotate { to { transform: rotate(360deg); } }
 
-    @keyframes drawLine {
-      0% { opacity: 0; transform: scale(0); }
-      50% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0.3; transform: scale(1); }
-    }
-
-    .header-content {
+    .game-info {
       position: relative;
       z-index: 2;
-      max-width: 800px;
     }
-
-    header h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 4.5rem;
-      font-weight: 700;
-      color: transparent;
-      margin: 0;
+    .game-tag {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      letter-spacing: 3px;
-      background: linear-gradient(45deg, var(--primary), var(--accent), var(--purple));
-      background-clip: text;
-      -webkit-background-clip: text;
-      animation: textGlow 4s ease-in-out infinite alternate;
-      position: relative;
+      color: var(--red);
+      margin-bottom: 8px;
     }
-
-    @keyframes textGlow {
-      0% {
-        filter: drop-shadow(0 0 5px var(--primary));
-      }
-      100% {
-        filter: drop-shadow(0 0 20px var(--primary)) drop-shadow(0 0 30px var(--accent));
-      }
+    .game-title {
+      font-size: 1.55rem;
+      font-weight: 400;
+      color: #fff;
+      line-height: 1.1;
     }
-
-    header p {
-      font-size: 1.2rem;
-      color: var(--medium);
-      margin: 2rem 0;
-      letter-spacing: 1px;
+    .game-desc {
+      margin-top: 8px;
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--text-dim);
+      max-width: 280px;
+      line-height: 1.5;
       opacity: 0;
-      animation: fadeInUp 1s ease-out 0.5s forwards;
+      transform: translateY(8px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .game-card:hover .game-desc {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* large "coming soon" card */
+    .card-wip {
+      grid-column: span 2;
+      aspect-ratio: auto;
+      min-height: 220px;
+      border: 1px solid var(--text-faint);
+      background: transparent;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      gap: 12px;
+    }
+    .card-wip::before { display: none; }
+    .card-wip .wip-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .card-wip .wip-title {
+      font-size: 1.8rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-faint);
+    }
+    .blink {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      margin-right: 10px;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+
+    /* ── ABOUT ── */
+    #about {
+      padding: 120px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      border-top: 1px solid var(--text-faint);
     }
 
-    /* Artistic Sections */
-    section {
-      padding: 8rem 0;
-      position: relative;
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: #fff;
+    }
+    h2 em { font-style: italic; color: var(--text-dim); }
+
+    .about-body {
+      padding-top: 12px;
+    }
+    .about-body p {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 20px;
     }
 
-    section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 10%;
-      width: 80%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    .about-stats {
+      display: flex;
+      gap: 48px;
+      margin-top: 48px;
+      padding-top: 36px;
+      border-top: 1px solid var(--text-faint);
+    }
+    .stat-num {
+      font-size: 2.6rem;
+      font-weight: 300;
+      color: #fff;
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-top: 6px;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      padding: 100px 48px 80px;
+      border-top: 1px solid var(--text-faint);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .contact-heading {
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .contact-sub {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--text-dim);
+      margin-bottom: 40px;
+    }
+
+    .contact-link {
+      font-size: 1.3rem;
+      font-style: italic;
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--text-faint);
+      padding-bottom: 4px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .contact-link:hover { color: var(--red); border-color: var(--red); }
+
+    .socials {
+      display: flex;
+      gap: 28px;
+      margin-top: 56px;
+      list-style: none;
+    }
+    .socials a {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .socials a:hover { color: var(--red); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 28px 48px;
+      border-top: 1px solid var(--text-faint);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      color: var(--text-faint);
+    }
+    .footer-mark {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--red);
       opacity: 0.5;
     }
 
-    .section-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 600;
-      color: var(--light);
-      margin-bottom: 3rem;
-      position: relative;
-      text-align: center;
-    }
-
-    .section-title::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-      box-shadow: 0 0 10px var(--primary);
-    }
-
-    .section-content {
-      background: rgba(21, 23, 30, 0.1);
-      backdrop-filter: blur(10px);
-      padding: 3rem;
-      border-radius: 20px;
-      border: 1px solid rgba(227, 27, 35, 0.1);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .section-content:hover {
-      border-color: rgba(227, 27, 35, 0.3);
-      box-shadow: 0 0 30px rgba(227, 27, 35, 0.1);
-    }
-
-    .section-content::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: conic-gradient(from 0deg, transparent, rgba(227, 27, 35, 0.05), transparent);
-      animation: rotate 20s linear infinite;
-      z-index: -1;
-    }
-
-    @keyframes rotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* About Section */
-    .about-text {
-      font-size: 1.1rem;
-      color: var(--light);
-      line-height: 1.8;
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto;
-      position: relative;
-    }
-
-    .about-text::first-letter {
-      font-size: 4rem;
-      font-family: 'Orbitron', sans-serif;
-      float: left;
-      line-height: 1;
-      margin: 0.1em 0.1em 0 0;
-      color: var(--primary);
-      text-shadow: 0 0 10px var(--primary);
-    }
-
-    /* Project Section */
-    .project-card {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
-    }
-
-    .project-info {
-      position: relative;
-    }
-
-    .project-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2rem;
-      color: var(--light);
-      margin-bottom: 1rem;
-      position: relative;
-    }
-
-    .project-title::before {
-      content: '';
-      position: absolute;
-      left: -2rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 4px;
-      height: 40px;
-      background: linear-gradient(180deg, var(--primary), var(--accent));
-      border-radius: 2px;
-    }
-
-    .project-link {
-      display: inline-block;
-      padding: 1rem 2rem;
-      background: transparent;
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-      border: 2px solid var(--primary);
-      border-radius: 30px;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-      margin-top: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .project-link::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-      transition: left 0.3s ease;
-      z-index: -1;
-    }
-
-    .project-link:hover::before {
-      left: 0;
-    }
-
-    .project-link:hover {
-      color: white;
-      box-shadow: 0 0 20px rgba(227, 27, 35, 0.5);
-    }
-
-    .project-image {
-      position: relative;
-      border-radius: 20px;
-      overflow: hidden;
-      transform: perspective(1000px) rotateY(-5deg);
-      transition: all 0.3s ease;
-    }
-
-    .project-image:hover {
-      transform: perspective(1000px) rotateY(0deg) scale(1.05);
-    }
-
-    .project-image img {
-      width: 100%;
-      height: auto;
-      display: block;
-      filter: sepia(20%) saturate(1.2);
-    }
-
-    .image-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 1rem;
-      background: linear-gradient(to top, rgba(227, 27, 35, 0.8), transparent);
-      color: white;
-      font-size: 0.9rem;
-      text-align: center;
-      backdrop-filter: blur(5px);
-    }
-
-    .slider-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .slider-images {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .slider-images img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    /* ── INTERSECTION FADE ── */
+    .reveal {
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
     }
-
-    .slider-images img.active {
+    .reveal.visible {
       opacity: 1;
-      position: relative;
+      transform: translateY(0);
     }
 
-    .slider-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 1rem;
-      z-index: 10;
-    }
-
-    .slider-btn {
-      background: rgba(227, 27, 35, 0.8);
-      border: none;
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(5px);
-    }
-
-    .slider-btn:hover {
-      background: rgba(227, 27, 35, 1);
-      box-shadow: 0 0 20px rgba(227, 27, 35, 0.5);
-      transform: scale(1.1);
-    }
-
-    .slider-dots {
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 0.5rem;
-      z-index: 10;
-    }
-
-    .slider-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(227, 27, 35, 0.5);
-    }
-
-    .slider-dot.active {
-      background: var(--primary);
-      box-shadow: 0 0 10px var(--primary);
-      transform: scale(1.3);
-    }
-
-    /* Contact Section */
-    .contact-info {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-    }
-
-    .contact-item {
-      background: rgba(37, 40, 48, 0.1);
-      padding: 2rem;
-      border-radius: 15px;
-      border: 1px solid rgba(227, 27, 35, 0.2);
-      position: relative;
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-
-    .contact-item::before {
-      content: '';
-      position: absolute;
-      top: -1px;
-      left: -1px;
-      right: -1px;
-      bottom: -1px;
-      border-radius: 15px;
-      padding: 1px;
-      background: linear-gradient(45deg, var(--primary), var(--accent), var(--purple));
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask-composite: exclude;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .contact-item:hover::before {
-      opacity: 1;
-    }
-
-    .contact-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(227, 27, 35, 0.2);
-    }
-
-    .contact-item h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
-      color: var(--light);
-      margin-bottom: 1rem;
-    }
-
-    .contact-item p, .contact-item a {
-      color: var(--medium);
-      margin: 0;
-      transition: color 0.3s;
-    }
-
-    .contact-item a:hover {
-      color: var(--primary);
-    }
-
-    /* Support Section */
-    .support-content {
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .support-btn {
-      display: inline-block;
-      padding: 1.5rem 3rem;
-      background: linear-gradient(45deg, var(--primary), var(--accent));
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      border-radius: 50px;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      font-size: 1rem;
-      letter-spacing: 2px;
-      margin-top: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .support-btn::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      transform: translate(-50%, -50%);
-    }
-
-    .support-btn:hover::before {
-      width: 300px;
-      height: 300px;
-    }
-
-    .support-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(227, 27, 35, 0.4);
-    }
-
-    /* Footer */
-    footer {
-      background: rgba(7, 8, 11, 0.5);
-      padding: 3rem 0;
-      text-align: center;
-      border-top: 1px solid rgba(227, 27, 35, 0.2);
-      backdrop-filter: blur(10px);
-    }
-
-    .footer-logo {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--light);
-      margin-bottom: 1rem;
-      display: inline-block;
-    }
-
-    .footer-logo span {
-      color: var(--primary);
-      text-shadow: 0 0 10px var(--primary);
-    }
-
-    .footer-copyright {
-      color: var(--medium);
-      font-size: 0.9rem;
-      margin-top: 2rem;
-    }
-
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-
-    .social-link {
-      color: var(--medium);
-      font-size: 1.2rem;
-      transition: all 0.3s;
-      padding: 0.5rem;
-      border-radius: 50%;
-      border: 1px solid transparent;
-    }
-
-    .social-link:hover {
-      color: var(--primary);
-      border-color: var(--primary);
-      box-shadow: 0 0 15px rgba(227, 27, 35, 0.3);
-    }
-
-    /* Mobile Responsive */
+    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
-      nav {
-        top: 1rem;
-        left: 1rem;
-        right: 1rem;
-        transform: none;
-        padding: 1rem;
-      }
-
-      .nav-container {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .nav-links {
-        gap: 1rem;
-      }
-
-      header h1 {
-        font-size: 2.5rem;
-      }
-
-      .project-card {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-
-      .project-image {
-        transform: none;
-      }
-
-      .contact-info {
-        grid-template-columns: 1fr;
-      }
-
-      .section-content {
-        padding: 2rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      header h1 {
-        font-size: 2rem;
-      }
-
-      .section-title {
-        font-size: 2rem;
-      }
-
-      .section-content {
-        padding: 1.5rem;
-      }
-    }
-
-    /* Smooth scrolling */
-    html {
-      scroll-behavior: smooth;
-    }
-
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--darker);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, var(--primary), var(--accent));
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(180deg, var(--primary-dark), var(--primary));
+      nav { padding: 22px 24px; }
+      .nav-links { display: none; }
+      #hero, #games, #about, #contact, footer { padding-left: 24px; padding-right: 24px; }
+      #about { grid-template-columns: 1fr; gap: 40px; }
+      .card-wip { grid-column: span 1; }
     }
   </style>
 </head>
 <body>
 
-  <div class="floating-shapes">
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-  </div>
+  <div id="cursor"></div>
 
-  <canvas class="bg-canvas" id="bgCanvas"></canvas>
-
+  <!-- NAV -->
   <nav>
-    <div class="nav-container">
-      <a href="#" class="nav-logo">REDTIDE<span>GAMES</span></a>
-      <div class="nav-links">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
-        <a href="#support">Support</a>
-      </div>
-    </div>
+    <a class="logo" href="#"><span>R</span>edtide Games</a>
+    <!--<ul class="nav-links">
+      <li><a href="#games">Games</a></li>
+      <li><a href="#about">Studio</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>-->
   </nav>
 
-  <header>
-    <div class="header-art">
-      <div class="art-line"></div>
-      <div class="art-line"></div>
-      <div class="art-line"></div>
-    </div>
-    <div class="header-content">
-      <h1>REDTIDE GAMES</h1>
-      <p>Pushing boundaries in interactive design through atmospheric and experimental gameplay</p>
-    </div>
-  </header>
+  <!-- HERO -->
+   
+  <section id="hero">
+    <canvas class="tide-canvas" id="tideCanvas"></canvas>
 
+    <div class="hero-inner">
+      <p class="hero-tag">Independent Game Studio</p>
+      <!--<h1>We make<br> <em>linger.</em></h1>-->
+      <!--<p class="hero-sub">Small team. Deliberate work. Stories that stay with you long after the credits roll.</p>-->
+      <a href="#games" class="hero-cta">
+        Explore our games <span class="arrow">→</span>
+      </a>
+    </div>
+
+    <div class="scroll-hint">scroll</div>
+  </section>
+
+  <!-- GAMES -->
+  <section id="games">
+    <p class="section-label reveal">// Games</p>
+
+    <div class="games-grid">
+
+      <a href="https://redtidegames.itch.io/experimentalfps" class="game-card reveal">
+        <div class="art art-1"><div class="art-shape"></div></div>
+        <div class="game-info">
+          <p class="game-tag">2025 · Experimental FPS</p>
+          <p class="game-title">Download from Itch.io</p>
+          <!--<p class="game-desc">A flooded town. A returning stranger. Every choice rewrites what you remember.</p>-->
+        </div>
+      </a>
+
+      <!--<a href="#" class="game-card reveal">
+        <div class="art art-2"><div class="art-shape"></div></div>
+        <div class="game-info">
+          <p class="game-tag">2021 · Puzzle</p>
+          <p class="game-title">Null Signal</p>
+          <p class="game-desc">Navigate a dying satellite. Solve in silence. The station is listening.</p>
+        </div>
+      </a>-->
+
+      <div class="game-card card-wip reveal">
+        <p class="wip-label"><span class="blink"></span>In development</p>
+        <p class="wip-title">Something is coming.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT 
   <section id="about">
-    <div class="container">
-      <h2 class="section-title">About The Studio</h2>
-      <div class="section-content">
-        <p class="about-text">Redtide Games is an independent studio exploring the boundaries of interactive design through atmospheric and experimental gameplay. The studio focuses on prototyping concepts in the FPS genres, with an emphasis on mood, mechanics, and narrative potential.</p>
-      </div>
+    <div class="reveal">
+      <h2>A studio built on<br><em>restraint &amp; craft.</em></h2>
     </div>
-  </section>
+    <div class="about-body reveal">
+      <p>Redtide Games is a small independent studio focused on handcrafted narrative and atmospheric experiences. We believe the quietest moments in games are often the most powerful.</p>
+      <p>We work slowly, on purpose. Every project starts with a feeling we want to leave behind — then we reverse-engineer everything else from there.</p>
 
-  <section id="projects">
-    <div class="container">
-      <h2 class="section-title">Current Project</h2>
-      <div class="section-content">
-        <div class="project-card">
-          <div class="project-info">
-            <h3 class="project-title">Experimental FPS Prototype</h3>
-            <p>More updates in process</p>
-            <a href="https://redtidegames.itch.io/experimentalfps" class="project-link" target="_blank">Download from itch.io</a>
-          </div>
-          <div class="project-image">
-            <div class="slider-container">
-              <div class="slider-images">
-                <img src="game.png" alt="Experimental FPS Screenshot 1" class="active">
-                <img src="game2.png" alt="Experimental FPS Screenshot 2">
-                <img src="game3.png" alt="Experimental FPS Screenshot 3">
-              </div>
-              <div class="slider-nav">
-                <button class="slider-btn" id="prevBtn">‹</button>
-                <button class="slider-btn" id="nextBtn">›</button>
-              </div>
-              <div class="slider-dots" id="sliderDots"></div>
-              <div class="image-caption">Gameplay Screenshots</div>
-            </div>
-          </div>
+      <div class="about-stats">
+        <div>
+          <p class="stat-num">2</p>
+          <p class="stat-label">Games shipped</p>
+        </div>
+        <div>
+          <p class="stat-num">4</p>
+          <p class="stat-label">People</p>
+        </div>
+        <div>
+          <p class="stat-num">∞</p>
+          <p class="stat-label">Cups of tea</p>
         </div>
       </div>
     </div>
-  </section>
+  </section>-->
 
+  <!-- CONTACT -->
   <section id="contact">
-    <div class="container">
-      <h2 class="section-title">Contact</h2>
-      <div class="section-content">
-        <div class="contact-info">
-          <div class="contact-item">
-            <h3>Business Inquiries</h3>
-            <p>kevin.chang.edu@gmail.com</p>
-          </div>
-          <div class="contact-item">
-            <h3>Community</h3>
-            <p>Discord: Dr.K#9651</p>
-          </div>
-          <div class="contact-item">
-            <h3>Collaboration</h3>
-            <p>Open to partnership opportunities</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <p class="contact-heading reveal">Contact us</p>
+    <!--<p class="contact-sub reveal">Press inquiries, collaborations, or just say hello.</p>-->
+    <a class="contact-link reveal" href="mailto:hello@redtidegames.com">kevin.chang.edu@gmail.com</a>
+
+    <ul class="socials reveal">
+      <li><a href="https://www.instagram.com/dr.k_e_vin">Instagram</a></li>
+      <li><a href="https://redtidegames.itch.io/">Itch.io</a></li>
+      <li><a href="https://ko-fi.com/kevyndev">Ko-fi</a></li>
+    </ul>
   </section>
 
-  <section id="support">
-    <div class="container">
-      <h2 class="section-title">Support Our Work</h2>
-      <div class="section-content">
-        <div class="support-content">
-          <p>As an independent studio, your support helps us continue developing innovative gaming experiences. Consider supporting our work to help bring these experimental concepts to life.</p>
-          <a href="https://ko-fi.com/kevyndev" class="support-btn" target="_blank">Support on Ko-fi</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
+  <!-- FOOTER -->
   <footer>
-    <div class="container">
-      <div class="footer-logo">REDTIDE<span>GAMES</span></div>
-      <div class="social-links">
-        <!--<a href="#" class="social-link">Twitter</a>
-        <a href="#" class="social-link">YouTube</a>
-        <a href="#" class="social-link">Instagram</a>-->
-      </div>
-      <p class="footer-copyright">&copy; 2025 Redtide Games. All rights reserved.</p>
-    </div>
+    <span class="footer-copy">© 2026 Redtide Games. All rights reserved.</span>
+    <div class="footer-mark"></div>
   </footer>
 
   <script>
-    // Animated background canvas
-    const canvas = document.getElementById('bgCanvas');
+    // ── Custom cursor ──
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    // ── Tide canvas animation ──
+    const canvas = document.getElementById('tideCanvas');
     const ctx = canvas.getContext('2d');
-    
-    let particles = [];
-    let mouseX = 0;
-    let mouseY = 0;
+    let W, H, t = 0;
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
     }
+    resize();
+    window.addEventListener('resize', resize);
 
-    function createParticle() {
-      return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.5 + 0.1
-      };
-    }
+    const lines = Array.from({ length: 7 }, (_, i) => ({
+      y: 0.3 + i * 0.1,
+      speed: 0.0004 + i * 0.00008,
+      amp: 18 + i * 6,
+      freq: 0.0016 - i * 0.00008,
+      phase: i * 1.1,
+      alpha: 0.06 - i * 0.006,
+      red: i < 2
+    }));
 
-    function initParticles() {
-      particles = [];
-      for (let i = 0; i < 50; i++) {
-        particles.push(createParticle());
-      }
-    }
-
-    function updateParticles() {
-      particles.forEach(particle => {
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-
-        // Bounce off edges
-        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
-
-        // Mouse interaction
-        const dx = mouseX - particle.x;
-        const dy = mouseY - particle.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 100) {
-          particle.vx += dx * 0.00001;
-          particle.vy += dy * 0.00001;
-        }
-      });
-    }
-
-    function drawParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      particles.forEach(particle => {
-        ctx.save();
-        ctx.globalAlpha = particle.opacity;
-        ctx.fillStyle = '#e31b23';
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = '#e31b23';
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      t += 1;
+      lines.forEach(l => {
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        for (let x = 0; x <= W; x += 2) {
+          const y = l.y * H
+            + Math.sin(x * l.freq + t * l.speed * 1000 + l.phase) * l.amp
+            + Math.sin(x * l.freq * 1.7 + t * l.speed * 700 + l.phase * 2) * (l.amp * 0.4);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = l.red
+          ? `rgba(192, 57, 43, ${l.alpha * 1.8})`
+          : `rgba(180, 195, 220, ${l.alpha})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
       });
-
-      // Draw connections
-      particles.forEach((particle, i) => {
-        particles.slice(i + 1).forEach(otherParticle => {
-          const dx = particle.x - otherParticle.x;
-          const dy = particle.y - otherParticle.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < 150) {
-            ctx.save();
-            ctx.globalAlpha = (150 - distance) / 150 * 0.1;
-            ctx.strokeStyle = '#e31b23';
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            ctx.moveTo(particle.x, particle.y);
-            ctx.lineTo(otherParticle.x, otherParticle.y);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-      });
+      requestAnimationFrame(draw);
     }
+    draw();
 
-    function animate() {
-      updateParticles();
-      drawParticles();
-      requestAnimationFrame(animate);
-    }
-
-    // Mouse tracking
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    // Initialize
-    resizeCanvas();
-    initParticles();
-    animate();
-
-    window.addEventListener('resize', () => {
-      resizeCanvas();
-      initParticles();
-    });
-
-    // Smooth scroll for navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
+    // ── Reveal on scroll ──
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
         }
       });
-    });
-
-    // Intersection Observer for animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    // Observe all sections
-    document.querySelectorAll('section').forEach(section => {
-      section.style.opacity = '0';
-      section.style.transform = 'translateY(50px)';
-      section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-      observer.observe(section);
-    });
-
-    // Image Slider
-    const sliderImages = document.querySelectorAll('.slider-images img');
-    const dotsContainer = document.getElementById('sliderDots');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    let currentSlide = 0;
-
-    // Create dots
-    sliderImages.forEach((_, index) => {
-      const dot = document.createElement('div');
-      dot.classList.add('slider-dot');
-      if (index === 0) dot.classList.add('active');
-      dot.addEventListener('click', () => goToSlide(index));
-      dotsContainer.appendChild(dot);
-    });
-
-    const dots = document.querySelectorAll('.slider-dot');
-
-    function goToSlide(n) {
-      sliderImages[currentSlide].classList.remove('active');
-      dots[currentSlide].classList.remove('active');
-      
-      currentSlide = (n + sliderImages.length) % sliderImages.length;
-      
-      sliderImages[currentSlide].classList.add('active');
-      dots[currentSlide].classList.add('active');
-    }
-
-    function nextSlide() {
-      goToSlide(currentSlide + 1);
-    }
-
-    function prevSlide() {
-      goToSlide(currentSlide - 1);
-    }
-
-    prevBtn.addEventListener('click', prevSlide);
-    nextBtn.addEventListener('click', nextSlide);
-
-    // Auto-advance slides every 5 seconds
-    setInterval(nextSlide, 5000);
+    }, { threshold: 0.12 });
+    reveals.forEach(r => observer.observe(r));
   </script>
+</body>
+</html>
