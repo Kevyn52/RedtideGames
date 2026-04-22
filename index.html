@@ -532,7 +532,12 @@
       #hero, #games, #about, #contact, footer { padding-left: 24px; padding-right: 24px; }
       #about { grid-template-columns: 1fr; gap: 40px; }
       .card-wip { grid-column: span 1; }
+
+    @media (pointer: coarse) {
+   body { cursor: auto; }
+   #cursor { display: none; }
     }
+        }
   </style>
 </head>
 <body>
@@ -576,7 +581,7 @@
         <div class="art art-1"><div class="art-shape"></div></div>
         <div class="game-info">
           <p class="game-tag">2025 · Experimental FPS</p>
-          <p class="game-title">Download from Itch.io</p>
+          <p class="game-title">Download</p>
           <!--<p class="game-desc">A flooded town. A returning stranger. Every choice rewrites what you remember.</p>-->
         </div>
       </a>
@@ -628,7 +633,7 @@
   <section id="contact">
     <p class="contact-heading reveal">Contact us</p>
     <!--<p class="contact-sub reveal">Press inquiries, collaborations, or just say hello.</p>-->
-    <a class="contact-link reveal" href="mailto:hello@redtidegames.com">kevin.chang.edu@gmail.com</a>
+    <a class="contact-link reveal" href="mailto:kevin.chang.edu@gmail.com">kevin.chang.edu@gmail.com</a>
 
     <ul class="socials reveal">
       <li><a href="https://www.instagram.com/dr.k_e_vin">Instagram</a></li>
